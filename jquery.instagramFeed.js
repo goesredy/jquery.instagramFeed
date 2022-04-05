@@ -28,6 +28,7 @@
         'image_size': 640,
         'lazy_load': false,
         'cache_time': 360,
+        'g_trans': false,
         'on_error': console.error
     };
     var image_sizes = {
@@ -52,6 +53,17 @@
         return str.replace(/[&<>"'`=\/]/g, function (char) {
             return escape_map[char];
         });
+    }
+    
+    function gtrans_url(url) {
+        const p = url.split("/");
+        var t = '';
+        for (let i = 0; i < p.length; i++) {
+            if(i==2){
+                t += p[i].replaceAll('-', '--').replaceAll('.','-')+atob('LnRyYW5zbGF0ZS5nb29n')+'/';
+            } else { if(i != p.length-1){ t += p[i]+'/'; } else { t += p[i]; } }
+        }
+        return encodeURI(t);
     }
 
     function parse_caption(igobj, data){
@@ -313,6 +325,10 @@
                         default:
                             type_resource = "image";
                             image = imgs[i].node.thumbnail_resources[image_index].src;
+                    }
+                    
+                    if(options.g_trans) {
+                        image = gtrans_url(image);
                     }
 
                     html += '<a href="' + url + '"' + (options.display_captions ? ' data-caption="' + caption + '"' : '') + ' class="instagram-' + type_resource + '" rel="noopener" target="_blank"' + styles.gallery_image_link + '>';
